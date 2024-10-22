@@ -4,6 +4,7 @@
 
 POST {{url_dev}}/shop/signup
 Content-Type: application/json
+x-api-key: d10644e89c1ca2ef27d783ae2612f485275196c4b634dfa43d70e47ea9b11ad26c248ac6569e055f866502b347a6521161f575ad549bdd604d9f508bfb4a594c
 
 {
     "name": "vinh shop",
