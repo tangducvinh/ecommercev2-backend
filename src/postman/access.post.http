@@ -2,12 +2,28 @@
 
 ### singup
 
-POST {{url_dev}}/shop/signup
+POST {{url_dev}}/user/signup
 Content-Type: application/json
 x-api-key: d10644e89c1ca2ef27d783ae2612f485275196c4b634dfa43d70e47ea9b11ad26c248ac6569e055f866502b347a6521161f575ad549bdd604d9f508bfb4a594c
 
 {
-    "name": "vinh shop",
-    "email": "shop0113@gmail.com",
+    "name": "vinh",
+    "email": "vinh1111@gmail.com",
     "password": "123456"
 }
+
+### signin
+POST {{url_dev}}/user/signin
+Content-Type: application/json
+x-api-key: d10644e89c1ca2ef27d783ae2612f485275196c4b634dfa43d70e47ea9b11ad26c248ac6569e055f866502b347a6521161f575ad549bdd604d9f508bfb4a594c
+
+{
+    "email": "vinh1111@gmail.com",
+    "password": "123456"
+}
+
+### logout
+POST {{url_dev}}/user/logout
+x-client-id: 671cfe2907bbfc44f7ab7c85
+x-api-key: d10644e89c1ca2ef27d783ae2612f485275196c4b634dfa43d70e47ea9b11ad26c248ac6569e055f866502b347a6521161f575ad549bdd604d9f508bfb4a594c
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzFjZmUyOTA3YmJmYzQ0ZjdhYjdjODUiLCJpYXQiOjE3Mjk5NTQ1OTQsImV4cCI6MTczMDEyNzM5NH0.POhUBDBWnQxDx55pywNudJg6hLwXC0_aDcJW_7IRINo

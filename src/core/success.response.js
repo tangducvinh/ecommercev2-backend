@@ -3,11 +3,13 @@
 const StatusCode = {
   OK: 200,
   CREATED: 201,
+  NOTFOUND: 404,
 };
 
 const ReasonStatusCode = {
   CREATED: "Created!",
   OK: "Success",
+  NOTFOUND: "Not Found",
 };
 
 class SuccessResponse {
@@ -44,7 +46,20 @@ class CREATED extends SuccessResponse {
   }
 }
 
+class NotFoundError extends SuccessResponse {
+  constructor({
+    message,
+    statusCode = StatusCode.NOTFOUND,
+    reasonStatusCode = ReasonStatusCode.NOTFOUND,
+    metadata,
+  }) {
+    super({ message, statusCode, reasonStatusCode, metadata });
+  }
+}
+
 module.exports = {
   OK,
   CREATED,
+  SuccessResponse,
+  NotFoundError,
 };

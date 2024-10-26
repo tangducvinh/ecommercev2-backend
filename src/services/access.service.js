@@ -1,5 +1,5 @@
 const express = require("express");
-const shopModel = require("../models/shop.model");
+const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
@@ -8,41 +8,84 @@ const { getInfoData } = require("../ultis");
 const {
   BadRequestError,
   ConflictRequestError,
+  AuthFailureError,
 } = require("../core/error.response");
+const { findByEmail } = require("./user.service");
 
-const RoleShop = {
-  SHOP: "SHOP",
+const RoleUser = {
+  USER: "USER",
   WRITER: "WRITE",
   EDITOR: "EDITOR",
   ADMIN: "ADMIN",
 };
 
 class AccessService {
+  static signIn = async ({ email, password, refreshToken = null }) => {
+    const user = await findByEmail({ email });
+    if (!user) throw new BadRequestError("Error: Use not registered");
+
+    const match = bcrypt.compare(password, user.password);
+
+    if (!match) throw new AuthFailureError("Authentication error");
+
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    const publicKey = crypto.randomBytes(64).toString("hex");
+
+    const tokens = await createTokenPair(
+      { userId: user._id },
+      publicKey,
+      privateKey
+    );
+
+    await KeyTokenService.updateKeyToken({
+      userId: user._id,
+      refreshToken: tokens.refreshToken,
+      privateKey,
+      publicKey,
+    });
+
+    return {
+      user: getInfoData({
+        fields: ["_id", "name", "email"],
+        object: user,
+      }),
+      tokens,
+    };
+  };
+
   static signUp = async ({ name, email, password }) => {
     try {
       // check email exist
-      const holderShop = await shopModel.findOne({ email }).lean();
-      if (holderShop) {
-        throw new BadRequestError("Error: Shop already registered");
+      const holderUser = await userModel.findOne({ email }).lean();
+      if (holderUser) {
+        throw new BadRequestError("Error: User already registered");
       }
 
       const passwordHash = await bcrypt.hash(password, 10);
-      const newShop = await shopModel.create({
+      const newUser = await userModel.create({
         name,
         email,
         password: passwordHash,
-        roles: [RoleShop.SHOP],
+        roles: [RoleUser.User],
       });
 
-      if (newShop) {
+      if (newUser) {
         const privateKey = crypto.randomBytes(64).toString("hex");
         const publicKey = crypto.randomBytes(64).toString("hex");
 
+        // create token pair || accessToken and refreshToken
+        const tokens = await createTokenPair(
+          { userId: newUser._id },
+          publicKey,
+          privateKey
+        );
+
         // save keyToken model
         const keyStore = await KeyTokenService.createKeyToken({
-          userId: newShop._id,
+          userId: newUser._id,
           publicKey,
           privateKey,
+          refreshToken: tokens.refreshToken,
         });
 
         if (!keyStore) {
@@ -52,19 +95,12 @@ class AccessService {
           };
         }
 
-        // create token pair || accessToken and refreshToken
-        const tokens = await createTokenPair(
-          { userId: newShop._id, email },
-          publicKey,
-          privateKey
-        );
-
         return {
           code: 201,
           metadata: {
-            shop: getInfoData({
+            user: getInfoData({
               fields: ["_id", "name", "email"],
-              object: newShop,
+              object: newUser,
             }),
             tokens,
           },
@@ -82,6 +118,10 @@ class AccessService {
         status: "error",
       };
     }
+  };
+
+  static logOut = async (keyStore) => {
+    return await KeyTokenService.removeKeyById(keyStore._id);
   };
 }
 
