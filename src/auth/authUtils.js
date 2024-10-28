@@ -2,7 +2,7 @@
 const JWT = require("jsonwebtoken");
 const asyncHandler = require("../helpers/asyncHandler");
 const { AuthFailureError } = require("../core/error.response");
-const { findByUserId } = require("../services/keyToken.service");
+const { findByShopId } = require("../services/keyToken.service");
 const { NotFoundError } = require("../core/success.response");
 
 const HEADER = {
@@ -37,30 +37,40 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 };
 
 const authentication = asyncHandler(async (req, res, next) => {
-  const userId = req.headers[HEADER.CLIENT_ID];
-  if (!userId) throw new AuthFailureError("Invalid Request");
+  const shopId = req.headers[HEADER.CLIENT_ID];
+  if (!shopId) throw new AuthFailureError("Invalid Request");
 
-  const keyStore = await findByUserId(userId);
+  const keyStore = await findByShopId(shopId);
   if (!keyStore) throw new NotFoundError("Not found keyStore");
 
   const accessToken = req.headers[HEADER.AUTHORIZATION];
   if (!accessToken) throw new AuthFailureError("Invalid Request");
 
   try {
-    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
+    const decodeShop = JWT.verify(accessToken, keyStore.publicKey);
 
-    if (userId !== decodeUser.userId)
-      throw new AuthFailureError("Invalid UserId");
+    if (shopId !== decodeShop.shopId)
+      throw new AuthFailureError("Invalid ShopId");
     req.keyStore = keyStore;
 
     return next();
   } catch (error) {
-    console.log(error);
     throw error;
   }
 });
 
+const verifyJWT = async (token, keySecret) => {
+  try {
+    const res = await JWT.verify(token, keySecret);
+
+    return res;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 module.exports = {
   createTokenPair,
   authentication,
+  verifyJWT,
 };

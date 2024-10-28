@@ -46,6 +46,7 @@ class AuthFailureError extends ErrorResponse {
   }
 }
 
+
 module.exports = {
   ConflictRequestError,
   BadRequestError,

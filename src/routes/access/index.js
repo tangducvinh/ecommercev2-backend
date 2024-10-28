@@ -7,12 +7,16 @@ const asyncHandler = require("../../helpers/asyncHandler");
 const router = require("express").Router();
 
 // signUp
-router.post("/user/signup", asyncHandler(accessController.signUp));
-router.post("/user/signin", asyncHandler(accessController.signIn));
+router.post("/shop/signup", asyncHandler(accessController.signUp));
+router.post("/shop/signin", asyncHandler(accessController.signIn));
 
 // authentication
 router.use(authentication);
 
-router.post("/user/logout", asyncHandler(accessController.logOut));
+router.post("/shop/logout", asyncHandler(accessController.logOut));
+router.post(
+  "/shop/refresh-token",
+  asyncHandler(accessController.handlerRefreshToken)
+);
 
 module.exports = router;
