@@ -36,23 +36,17 @@ const searchProductUser = async ({ keySearch }) => {
 };
 
 const findAllProducts = async ({ limit, sort, page, filter, select }) => {
-  try {
-    console.log({ limit, sort, page, filter, select });
-    console.log(getSelectData(select));
-    const skip = (page - 1) * limit;
-    const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
-    const products = await product
-      .find(filter)
-      .sort(sortBy)
-      .skip(skip)
-      .limit(limit)
-      .select(getSelectData(select))
-      .lean();
+  const skip = (page - 1) * limit;
+  const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+  const products = await product
+    .find(filter)
+    .sort(sortBy)
+    .skip(skip)
+    .limit(limit)
+    .select(getSelectData(select))
+    .lean();
 
-    return products;
-  } catch (e) {
-    console.log(e);
-  }
+  return products;
 };
 
 const findProduct = async ({ product_slug }) => {

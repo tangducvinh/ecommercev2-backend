@@ -9,6 +9,7 @@ const {
 const slugify = require("slugify");
 const { BadRequestError } = require("../core/error.response");
 const ProductRepo = require("../models/repositories/product.repo");
+const InventoryRepo = require("../models/repositories/inventory.repo");
 const { removeUndefinedObject, updateNestedObjectParser } = require("../ultis");
 
 // define factory class to create product
@@ -105,7 +106,17 @@ class Product {
 
   // create new product
   async createProduct() {
-    return await product.create(this);
+    const newProduct = await product.create(this);
+    if (newProduct) {
+      // add product_stock in inventory collection
+      await InventoryRepo.insertInventory({
+        productId: newProduct._id,
+        shopId: newProduct.product_shop,
+        stock: newProduct.product_quantity,
+      });
+    }
+
+    return newProduct;
   }
 
   // update product
@@ -133,16 +144,19 @@ class Clothing extends Product {
   async updateProduct(productId) {
     const objectParams = removeUndefinedObject(this);
 
-    if (objectParams.product_attribute) {
-      // update child
-      await ProductRepo.updateProductById({
-        productId,
-        bodyUpdate: updateNestedObjectParser(objectParams.product_attribute),
-        model: clothing,
-      });
-    }
+    // if (objectParams.product_attributes) {
+    //   // update child
+    //   await ProductRepo.updateProductById({
+    //     productId,
+    //     bodyUpdate: updateNestedObjectParser(objectParams.product_attributes),
+    //     model: clothing,
+    //   });
+    // }
 
-    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams.product_attribute));
+    const updateProduct = await super.updateProduct(
+      productId,
+      updateNestedObjectParser(objectParams)
+    );
     return updateProduct;
   }
 }
