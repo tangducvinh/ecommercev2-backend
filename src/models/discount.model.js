@@ -42,6 +42,7 @@ var discountSchema = new mongoose.Schema(
     },
     discount_uses_count: {
       type: Number,
+      default: 0,
     },
     discount_users_used: {
       type: Array,

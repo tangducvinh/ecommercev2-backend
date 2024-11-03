@@ -1,6 +1,6 @@
 "use strict";
 
-const { getSelectData} = require('../../ultis')
+const { getSelectData } = require("../../ultis");
 
 const findAllDiscountCodesSelect = async ({
   limit = 50,
@@ -23,6 +23,11 @@ const findAllDiscountCodesSelect = async ({
   return result;
 };
 
+const checkDiscountExists = async ({ model, filter }) => {
+  return await model.findOne(filter).lean();
+};
+
 module.exports = {
   findAllDiscountCodesSelect,
+  checkDiscountExists,
 };

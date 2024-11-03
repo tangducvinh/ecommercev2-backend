@@ -8,7 +8,7 @@ const {
 } = require("../../models/product.model");
 const { Types } = require("mongoose");
 
-const { getSelectData } = require("../../ultis");
+const { getSelectData, convertToObjectMongodb } = require("../../ultis");
 
 const findAllDraftsForShop = async ({ query, limit, skip }) => {
   return await queryProduct({ query, limit, skip });
@@ -99,6 +99,12 @@ const queryProduct = async ({ query, limit, skip }) => {
     .exec();
 };
 
+const getProductById = async (productId) => {
+  return await product
+    .findOne({ _id: convertToObjectMongodb(productId) })
+    .lean();
+};
+
 module.exports = {
   findAllDraftsForShop,
   publishProductByShop,
@@ -108,4 +114,5 @@ module.exports = {
   findAllProducts,
   findProduct,
   updateProductById,
+  getProductById,
 };

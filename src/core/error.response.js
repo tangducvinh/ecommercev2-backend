@@ -26,14 +26,14 @@ class NotFoundError extends ErrorResponse {
     message = ReasonStatusCode.NOT_FOUND,
     status = StatusCode.NOT_FOUND
   ) {
-    supper(message, status);
+    super(message, status);
   }
 }
 
 class ConflictRequestError extends ErrorResponse {
   constructor(
     message = ReasonStatusCode.CONFLICT,
-    status = StatusCode.FORBIDDEN
+    status = StatusCode.CONFLICT
   ) {
     super(message, status);
   }
@@ -42,7 +42,7 @@ class ConflictRequestError extends ErrorResponse {
 class BadRequestError extends ErrorResponse {
   constructor(
     message = ReasonStatusCode.CONFLICT,
-    status = StatusCode.FORBIDDEN
+    status = StatusCode.CONFLICT
   ) {
     super(message, status);
   }

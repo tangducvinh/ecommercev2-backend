@@ -8,13 +8,17 @@ const router = require("express").Router();
 
 router.get(
   "/products-with-discount",
-  discountController.getAllProductWidthDiscountCode
+  asyncHandler(discountController.getAllProductWidthDiscountCode)
 );
-router.get("/discount-of-shop", discountController.getAllDiscountOfShop);
+router.get(
+  "/discount-of-shop",
+  asyncHandler(discountController.getAllDiscountOfShop)
+);
 
 // authentication
 router.use(authentication);
 
+router.post("/amount", asyncHandler(discountController.getDiscountAmount));
 router.post("/", asyncHandler(discountController.createDiscount));
 router.patch("/:discountId", asyncHandler(discountController.updateDiscount));
 

@@ -26,17 +26,18 @@ app.use("", require("./routes"));
 
 // handle error
 app.use((req, res, next) => {
-  const error = new Error("Not Found");
-  error.status = 404;
-  next(error);
+  const err = new Error();
+  err.status = 404;
+  next(err);
 });
 
 app.use((err, req, res, next) => {
   const statusCode = err?.status || 500;
+  console.log({ err });
   return res.status(statusCode).json({
     status: "error",
     code: statusCode,
-    message: err.massage || "Internal Server Error",
+    message: err?.message || "Not Found 1",
   });
 });
 

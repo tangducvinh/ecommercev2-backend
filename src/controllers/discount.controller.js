@@ -33,6 +33,13 @@ class DiscountController {
       metadata: await DiscountService.getAllDiscountOfShop(req.query),
     }).send(res);
   };
+
+  getDiscountAmount = async (req, res, next) => {
+    new OK({
+      message: "Get discount amount success",
+      metadata: await DiscountService.getDiscountAmount(req.body),
+    }).send(res);
+  };
 }
 
 module.exports = new DiscountController();
