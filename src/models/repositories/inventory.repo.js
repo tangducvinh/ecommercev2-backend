@@ -1,3 +1,4 @@
+const { convertToObjectMongodb } = require("../../ultis");
 const { inventory } = require("../inventory.model");
 
 const insertInventory = async ({
@@ -14,6 +15,29 @@ const insertInventory = async ({
   });
 };
 
+const reservationInventory = async ({ productId, quantity, cartId }) => {
+  const query = {
+      inven_productId: convertToObjectMongodb(productId),
+      inven_stock: { $gte: quantity },
+    },
+    updateSet = {
+      $inc: {
+        inven_stock: -quantity,
+      },
+      $push: {
+        inven_reservation: {
+          quantity,
+          cartId,
+          createOn: new Date(),
+        },
+      },
+    },
+    option = { upsert: true, new: true };
+
+  return await inventory.updateOne(query, updateSet);
+};
+
 module.exports = {
   insertInventory,
+  reservationInventory,
 };

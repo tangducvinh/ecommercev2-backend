@@ -207,8 +207,7 @@ class DiscountService {
     }
 
     // check discount_type
-    const newAmount = useUserDiscount?.discount_users_used.amount || 1;
-    console.log({ totalOrder });
+    const newAmount = useUserDiscount?.discount_users_used?.amount || 1;
     const amount =
       discount_type === "fix_amount"
         ? discount_value

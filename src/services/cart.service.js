@@ -23,7 +23,9 @@ const {
 } = require("../core/error.response");
 
 class CartService {
+  //ok
   async addToCart({ userId, product = {} }) {
+    const { productId } = product;
     const userCart = await cart.findOne({ cart_userId: userId });
 
     // check for cart existence
@@ -36,9 +38,11 @@ class CartService {
       return await userCart.save();
     }
 
-    return await CartRepo.updateQuantityCart({ userId, product });
+    if (!userCart.cart_products.some((item) => item.productId === productId)) {
+      return await CartRepo.addNewItemToCart({ userId, product });
+    }
 
-    // thieu truong hop them san pham moi khac voi san pham co trong gio hang ?
+    return await CartRepo.updateQuantityCart({ userId, product });
   }
 
   /*
@@ -63,7 +67,7 @@ class CartService {
   //
   async addToCartV2({ userId, shop_order_ids }) {
     const { productId, quantity, old_quantity } =
-      shop_order_ids[0].item_products[0]; // what is it?
+      shop_order_ids[0].item_products[0];
 
     const foundProduct = await ProductRepo.getProductById(productId);
     if (!foundProduct) throw new NotFoundError("Product is not exists");

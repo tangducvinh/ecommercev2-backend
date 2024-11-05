@@ -4,6 +4,7 @@ const { OK, CREATED, SuccessResponse } = require("../core/success.response");
 const CartService = require("../services/cart.service");
 
 class CartController {
+  //ok
   async addToCart(req, res, next) {
     new CREATED({
       message: "Add to cart success!",
@@ -22,6 +23,13 @@ class CartController {
     new OK({
       message: "delete success!",
       metadata: await CartService.deleteUserCart(req.body),
+    }).send(res);
+  }
+
+  async updateQuantityItem(req, res, next) {
+    new OK({
+      message: "update success!",
+      metadata: await CartService.addToCartV2(req.body),
     }).send(res);
   }
 }
