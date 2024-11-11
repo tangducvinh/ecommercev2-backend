@@ -11,6 +11,7 @@ const { BadRequestError } = require("../core/error.response");
 const ProductRepo = require("../models/repositories/product.repo");
 const InventoryRepo = require("../models/repositories/inventory.repo");
 const { removeUndefinedObject, updateNestedObjectParser } = require("../ultis");
+const NotificationService = require("../services/notification.service");
 
 // define factory class to create product
 class ProductFactory {
@@ -113,6 +114,20 @@ class Product {
         productId: newProduct._id,
         shopId: newProduct.product_shop,
         stock: newProduct.product_quantity,
+      });
+
+      //type = "SHOP-001",
+      // receivedId = "1",
+      // senderId = "1",
+      // options: {},
+      await NotificationService.pushNotificationToSystem({
+        type: "SHOP-001",
+        receivedId: "1",
+        senderId: this.product_shop,
+        options: {
+          product_name: this.product_name,
+          shop_name: this.product_shop,
+        },
       });
     }
 
