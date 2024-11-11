@@ -13,17 +13,17 @@ class LoggerService {
     });
 
     // add channelid
-    // this.channelId = process.env.CHANNELID_DISCORD;
-    this.channelId = "1303982262576087149";
+    this.channelId = process.env.CHANNELID_DISCORD;
+    // this.channelId = "1303982262576087149";
 
     this.client.on("ready", () => {
       console.log("Logged is as ", this.client.user.tag);
     });
 
-    // this.client.login(process.env.TOKEN_DISCORD);
-    this.client.login(
-      "MTMwMzk4MTE0Nzg4NTQwNDE3MA.GhkJzN.cz-YWoQ5J0WGaLsDMdIpOTkAw7T2dOOGxIGRws"
-    );
+    this.client.login(process.env.TOKEN_DISCORD);
+    // this.client.login(
+    //   "MTMwMzk4MTE0Nzg4NTQwNDE3MA.GhkJzN.cz-YWoQ5J0WGaLsDMdIpOTkAw7T2dOOGxIGRws"
+    // );
   }
 
   sendToMessage(message = "message") {
